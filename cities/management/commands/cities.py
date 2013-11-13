@@ -201,6 +201,7 @@ class Command(BaseCommand):
         self.build_country_index()
                 
         self.logger.info("Importing region data")
+        regions = []
         for items in self.parse(data):
             if not self.call_hook('region_pre', items): continue
             
@@ -208,9 +209,9 @@ class Command(BaseCommand):
             if not region: continue
             
             if not self.call_hook('region_post', region, items): continue
-            region.save()
-            self.logger.debug("Added region: {}, {}".format(region.code, region))
-        
+            regions.append(region)
+        Region.objects.bulk_create(regions)
+
     def build_region_index(self):
         if hasattr(self, 'region_index'): return
         
@@ -291,6 +292,7 @@ class Command(BaseCommand):
         self.build_region_index()
 
         self.logger.info("Importing city data")
+        cities = []
         for items in self.parse(data):
             if not self.call_hook('city_pre', items): continue
             
@@ -301,9 +303,9 @@ class Command(BaseCommand):
             if not city: continue
             
             if not self.call_hook('city_post', city, items): continue
-            city.save()
-            self.logger.debug("Added city: {}".format(city))
-        
+            cities.append(city)
+       City.objects.bulk_create(cities)
+ 
     def build_hierarchy(self):
         if hasattr(self, 'hierarchy'): return
         
@@ -332,6 +334,7 @@ class Command(BaseCommand):
             city_index[obj.id] = obj
             
         self.logger.info("Importing district data")
+        districts = []
         for items in self.parse(data):
             if not self.call_hook('district_pre', items): continue
             
@@ -366,9 +369,10 @@ class Command(BaseCommand):
             district.city = city
             
             if not self.call_hook('district_post', district, items): continue
-            district.save()
+            districts.append(district)
             self.logger.debug("Added district: {}".format(district))
-        
+       District.objects.bulk_create(districts)
+ 
     def import_alt_name(self):
         uptodate = self.download('alt_name')
         if uptodate and not self.force: return
