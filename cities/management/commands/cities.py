@@ -304,7 +304,7 @@ class Command(BaseCommand):
             
             if not self.call_hook('city_post', city, items): continue
             cities.append(city)
-       City.objects.bulk_create(cities)
+        City.objects.bulk_create(cities)
  
     def build_hierarchy(self):
         if hasattr(self, 'hierarchy'): return
@@ -371,7 +371,7 @@ class Command(BaseCommand):
             if not self.call_hook('district_post', district, items): continue
             districts.append(district)
             self.logger.debug("Added district: {}".format(district))
-       District.objects.bulk_create(districts)
+        District.objects.bulk_create(districts)
  
     def import_alt_name(self):
         uptodate = self.download('alt_name')
